@@ -196,13 +196,7 @@ def load_all_player_data():
     
     # Handedness mapping
     handedness_map = {
-        'Andrew Ayers': 'LHP',
-        'Tom Wilkie': 'LHP', 
-        'Conor Wolf': 'LHP',
-        'Jakson Ross': 'LHP',
-        'Mark Holm': 'LHP',
-        'Nolan Feidt': 'LHP',
-        'Ty Corey': 'LHP'
+        'Andrew Kelly': 'RHP'
     }
     
     for csv_file in csv_files:
@@ -2542,6 +2536,167 @@ def display_all_dynamo_tests(dynamo_perf_df, player_name):
     st.pyplot(fig)
     plt.close()
 
+def display_player_horizontal_jumps(player_name):
+    """Display the specific player's horizontal jump data."""
+    st.markdown('<h3 class="section-header">Horizontal Jumps Assessment</h3>', unsafe_allow_html=True)
+
+    excel_file_path = os.path.join("data", "TimberwolvesBaseballTableAssessment.xlsx")
+
+    if not os.path.exists(excel_file_path):
+        st.error("Assessment table file not found")
+        return
+
+    try:
+        # Read the Horizontal Jumps sheet
+        jumps_df = pd.read_excel(excel_file_path, sheet_name='Horizontal Jumps', engine='openpyxl')
+
+        # Clean up the dataframe
+        jumps_df = jumps_df.dropna(how='all')
+
+        # Split the selected player name to get first and last name
+        name_parts = player_name.split()
+        if len(name_parts) >= 2:
+            first_name = name_parts[0]
+            last_name = name_parts[-1]
+        else:
+            st.warning(f"Could not parse player name: {player_name}")
+            return
+
+        # Find the player's row
+        player_row = None
+
+        if 'First Name' in jumps_df.columns and 'Last Name' in jumps_df.columns:
+            exact_match = jumps_df[
+                (jumps_df['First Name'].str.strip().str.lower() == first_name.lower()) & 
+                (jumps_df['Last Name'].str.strip().str.lower() == last_name.lower())
+            ]
+
+            if not exact_match.empty:
+                player_row = exact_match.iloc[0]
+            else:
+                partial_match = jumps_df[
+                    (jumps_df['First Name'].str.contains(first_name, case=False, na=False)) & 
+                    (jumps_df['Last Name'].str.contains(last_name, case=False, na=False))
+                ]
+
+                if not partial_match.empty:
+                    player_row = partial_match.iloc[0]
+        else:
+            st.error("Could not find 'First Name' and 'Last Name' columns in the Horizontal Jumps sheet")
+            return
+
+        if player_row is None:
+            st.warning(f"No horizontal jump data found for {player_name}")
+            return
+
+        # Function to convert feet'inches" format to total inches
+        def convert_to_inches(val):
+            if pd.isna(val):
+                return np.nan
+            if isinstance(val, (int, float)):
+                return val
+            val_str = str(val).strip()
+            try:
+                if "'" in val_str:
+                    parts = val_str.replace('"', '').split("'")
+                    feet = int(parts[0])
+                    inches = int(parts[1]) if parts[1] else 0
+                    return feet * 12 + inches
+                else:
+                    return float(val_str)
+            except:
+                return np.nan
+
+        # Identify measurement columns
+        name_columns = ['First Name', 'Last Name']
+        measurement_columns = [col for col in jumps_df.columns if col not in name_columns]
+
+        # Convert all measurement columns to inches for team stats
+        for col in measurement_columns:
+            jumps_df[col] = jumps_df[col].apply(convert_to_inches)
+
+        # Calculate team statistics for each measurement column
+        jumps_stats_info = {}
+        for column in measurement_columns:
+            numeric_col = pd.to_numeric(jumps_df[column], errors='coerce')
+
+            if numeric_col.notna().sum() >= 3:
+                median = numeric_col.median()
+                std = numeric_col.std()
+
+                if std > 0:
+                    jumps_stats_info[column] = {
+                        'median': median,
+                        'std': std,
+                        'lower_bound': median - std,
+                        'upper_bound': median + std
+                    }
+
+        st.success(f"Found horizontal jump data for {player_name}")
+
+        # Display legend
+        st.markdown("""
+        <div style='padding: 10px; background-color: #000000; border-radius: 5px; margin-bottom: 10px; color: white;'>
+            <strong>Legend:</strong> 
+            <span style='background-color: #cc0000; color: white; padding: 2px 8px; margin: 0 5px; border-radius: 3px; font-weight: bold;'>Needs Improvement</span>
+            <span style='background-color: #006400; color: white; padding: 2px 8px; margin: 0 5px; border-radius: 3px; font-weight: bold;'>Positive Outlier (ensure maintenance)</span>
+            <span style='margin-left: 15px; color: #B8D4E8;'>(All values in inches)</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Display player's jump metrics in a grid with color coding
+        cols = st.columns(3)
+        col_idx = 0
+
+        for column in measurement_columns:
+            raw_value = player_row[column]
+            value = convert_to_inches(raw_value)
+
+            if pd.notna(value):
+                # Round to nearest inch
+                value = int(round(value))
+
+                # Check if this is an outlier
+                is_outlier = False
+                outlier_type = None
+
+                if column in jumps_stats_info:
+                    if value < jumps_stats_info[column]['lower_bound']:
+                        is_outlier = True
+                        outlier_type = 'low'
+                    elif value > jumps_stats_info[column]['upper_bound']:
+                        is_outlier = True
+                        outlier_type = 'high'
+
+                with cols[col_idx % 3]:
+                    if is_outlier:
+                        if outlier_type == 'low':
+                            st.markdown(f"""
+                            <div style='background-color: #cc0000; color: white; padding: 10px; border-radius: 5px; font-weight: bold; text-align: center; margin-bottom: 10px;'>
+                                <div style='font-size: 0.8em; margin-bottom: 5px;'>{column}</div>
+                                <div style='font-size: 1.5em;'>{value}"</div>
+                                <div style='font-size: 0.7em; margin-top: 5px;'>Below Team Avg</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                        else:  # high
+                            st.markdown(f"""
+                            <div style='background-color: #006400; color: white; padding: 10px; border-radius: 5px; font-weight: bold; text-align: center; margin-bottom: 10px;'>
+                                <div style='font-size: 0.8em; margin-bottom: 5px;'>{column}</div>
+                                <div style='font-size: 1.5em;'>{value}"</div>
+                                <div style='font-size: 0.7em; margin-top: 5px;'>Above Team Avg</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                    else:
+                        st.metric(column, f'{value}"')
+
+                col_idx += 1
+
+        # Calculate and display asymmetry for single-leg tests
+        st.markdown("---")
+
+    except Exception as e:
+        st.error(f"Error reading Horizontal Jumps sheet: {str(e)}")
+        st.info("Please ensure the 'Horizontal Jumps' sheet exists in the Excel file.")
 
 def biomechanics_display(player_name):
     """Display biomechanical chart for the selected player."""
@@ -3074,6 +3229,9 @@ def main():
         
         # Display rotational analysis section
         display_player_rotational_analysis(selected_player, player_profile_id)
+
+        #Horizontal Jumps
+        display_player_horizontal_jumps(selected_player)
 
         # Add biomechanics section
         st.markdown('<h3 class="section-header">Biomechanical Analysis</h3>', unsafe_allow_html=True)
