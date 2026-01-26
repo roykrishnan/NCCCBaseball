@@ -2244,8 +2244,6 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
     er_data = shoulder_data[shoulder_data['movement'].str.contains('ExternalRotation', case=False, na=False)]
     ir_data = shoulder_data[shoulder_data['movement'].str.contains('InternalRotation', case=False, na=False)]
     
-    st.subheader("Arm Care Analysis (Shoulder ER/IR)")
-    
     if er_data.empty and ir_data.empty:
         st.info("No External/Internal Rotation data found")
         
@@ -2256,7 +2254,7 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
         return
     
     # Summary metrics
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         er_count = len(er_data['testId'].unique()) if not er_data.empty else 0
@@ -2279,6 +2277,9 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
             st.metric("IR Peak Force", f"{ir_max:.1f} N")
         else:
             st.metric("IR Peak Force", "N/A")
+    with col5:
+        st.metric("ER/IR Ratio", f"{er_max/ir_max:.2f}")
+
     
     # Calculate ER/IR Ratio
     if not er_data.empty and not ir_data.empty:
@@ -2287,9 +2288,6 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
         
         if ir_max > 0:
             er_ir_ratio = er_max / ir_max
-            
-            st.markdown("---")
-            st.subheader("ER/IR Ratio Analysis")
             
             # Calculate team median if team data is available
             team_median_ratio = None
@@ -2330,18 +2328,7 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
                     ir_vs_median = ((ir_max - team_median_ir) / team_median_ir) * 100
                     st.metric("IR vs Team Median", f"{ir_max:.1f} N", f"{ir_vs_median:+.1f}%")
             else:
-                st.metric("ER/IR Ratio", f"{er_ir_ratio:.2f}")
-            
-            # Research-informed interpretation
-            st.markdown(f"""
-            **Interpretation (Isometric Testing):**
-            
-            Research on isometric handheld dynamometry in baseball players shows:
-            - Professional pitcher throwing arm average: ~0.75-0.83
-            - Non-throwing arm average: ~0.99
-            - Ratios <0.70 may indicate increased injury risk
-            - Ratios near 1.0 suggest balanced strength
-            """)
+                pass
             
             # Create larger comparison chart (full width)
             fig = create_er_ir_comparison_chart(er_max, ir_max, er_ir_ratio, player_name, 
@@ -2386,40 +2373,27 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
 
 def create_er_ir_comparison_chart(er_value, ir_value, ratio, player_name, 
                                    team_median_ratio=None, team_median_er=None, team_median_ir=None):
-    """Create a research-informed comparison chart with team median reference"""
+    """Create a research-informed comparison chart matching the reference design."""
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     fig.patch.set_facecolor('#1e1e1e')
     
-    # Left panel: Bar comparison with team median
+    # Left panel: Simple bar comparison (ER vs IR)
     ax1.set_facecolor('#1e1e1e')
     
     x = np.arange(2)
-    width = 0.35
+    width = 0.6
     
-    # Player bars
-    player_bars = ax1.bar(x - width/2, [er_value, ir_value], width, 
-                          label=player_name, color=['#4A90A4', '#C41E3A'], 
-                          alpha=0.9, edgecolor='white', linewidth=2)
+    # Player bars - ER in teal/blue, IR in red
+    colors = ['#4A90A4', '#C41E3A']
+    bars = ax1.bar(x, [er_value, ir_value], width, color=colors, 
+                   alpha=0.9, edgecolor='white', linewidth=2)
     
-    # Team median bars (if available)
-    if team_median_er is not None and team_median_ir is not None:
-        median_bars = ax1.bar(x + width/2, [team_median_er, team_median_ir], width,
-                              label='Team Median', color=['#4A90A4', '#C41E3A'], 
-                              alpha=0.4, edgecolor='white', linewidth=2, hatch='//')
-    
-    # Add value labels on player bars
-    for bar, val in zip(player_bars, [er_value, ir_value]):
-        ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
+    # Add value labels on bars
+    for bar, val in zip(bars, [er_value, ir_value]):
+        ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 5,
                 f'{val:.1f} N', ha='center', va='bottom', 
-                color='white', fontsize=12, fontweight='bold')
-    
-    # Add value labels on team median bars
-    if team_median_er is not None and team_median_ir is not None:
-        for bar, val in zip(median_bars, [team_median_er, team_median_ir]):
-            ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
-                    f'{val:.1f}', ha='center', va='bottom', 
-                    color='gray', fontsize=10)
+                color='white', fontsize=14, fontweight='bold')
     
     ax1.set_ylabel('Peak Force (Newtons)', color='white', fontsize=12)
     ax1.set_title('Rotator Strength vs Team', color='white', fontsize=14, fontweight='bold')
@@ -2428,47 +2402,52 @@ def create_er_ir_comparison_chart(er_value, ir_value, ratio, player_name,
     ax1.tick_params(colors='white')
     for spine in ax1.spines.values():
         spine.set_color('white')
-    ax1.set_ylim(0, max(er_value, ir_value, team_median_er or 0, team_median_ir or 0) * 1.25)
+    ax1.set_ylim(0, max(er_value, ir_value) * 1.25)
     
-    # Add legend
-    if team_median_er is not None:
-        legend = ax1.legend(loc='upper right', facecolor='#1e1e1e', edgecolor='white', labelcolor='white')
-    
-    # Right panel: Ratio with research context and team median
+    # Right panel: Horizontal bar showing ratio with reference lines
     ax2.set_facecolor('#1e1e1e')
     
-    # Show ratio as indicator with research reference ranges
-    ax2.barh(['This Player'], [ratio], height=0.3, color='#C41E3A', alpha=0.9, edgecolor='white', linewidth=2)
+    # Determine x-axis range based on ratio value
+    x_max = max(1.35, ratio + 0.15)
+    
+    # Draw the ratio bar
+    bar_height = 0.4
+    ax2.barh([0], [ratio], height=bar_height, color='#C41E3A', alpha=0.9, 
+             edgecolor='white', linewidth=2)
     
     # Add reference lines from research
     ax2.axvline(x=0.70, color='#FFD700', linestyle='--', linewidth=2, alpha=0.8)
     ax2.axvline(x=0.83, color='#00CED1', linestyle='--', linewidth=2, alpha=0.8)
     ax2.axvline(x=1.0, color='white', linestyle=':', linewidth=2, alpha=0.5)
+    ax2.axvline(x=1.3, color='#FF6B6B', linestyle='--', linewidth=2, alpha=0.8)
     
     # Add team median line if available
     if team_median_ratio is not None:
         ax2.axvline(x=team_median_ratio, color='#32CD32', linestyle='-', linewidth=3, alpha=0.9)
-        ax2.text(team_median_ratio, 0.55, f'Team\nMedian\n({team_median_ratio:.2f})', ha='center', va='bottom', 
-                color='#32CD32', fontsize=10, fontweight='bold')
+        ax2.text(team_median_ratio, 0.45, f'Team\nMedian\n({team_median_ratio:.2f})', ha='center', va='bottom', 
+                color='#32CD32', fontsize=9, fontweight='bold')
     
-    # Add reference labels at top
-    ax2.text(0.70, 0.55, 'Injury Risk\nThreshold\n(0.70)', ha='center', va='bottom', 
+    # Add reference labels at top of plot area
+    label_y = 0.45
+    ax2.text(0.70, label_y, 'Injury Risk\n ER Threshold\n(0.70)', ha='center', va='bottom', 
             color='#FFD700', fontsize=9, fontweight='bold')
-    ax2.text(0.83, 0.55, 'Pro Pitcher\nAvg\n(0.83)', ha='center', va='bottom', 
+    ax2.text(0.83, label_y, 'Pro Pitcher\nAvg\n(0.83)', ha='center', va='bottom', 
             color='#00CED1', fontsize=9, fontweight='bold')
-    ax2.text(1.0, 0.55, 'Balanced\n(1.0)', ha='center', va='bottom', 
+    ax2.text(1.0, label_y, 'Balanced\n(1.0)', ha='center', va='bottom', 
             color='white', fontsize=9, alpha=0.7)
+    ax2.text(1.3, label_y, 'IR Deficit \n(arm unloading\ninability)', ha='center', va='bottom', 
+            color='#FF6B6B', fontsize=9, fontweight='bold')
     
-    # Add ratio value label
-    label_x = min(ratio + 0.04, 1.25)
+    # Add ratio value label at the end of the bar
+    label_x = ratio + 0.04
     ax2.text(label_x, 0, f'{ratio:.2f}', ha='left', va='center',
-            color='white', fontsize=18, fontweight='bold')
+            color='white', fontsize=18, fontweight='bold', style='italic')
     
-    # Add marker for the ratio value
-    ax2.plot(ratio, 0, marker='D', markersize=14, color='white', zorder=10)
+    # Add diamond marker at the end of the bar
+    ax2.plot(ratio, 0, marker='D', markersize=12, color='white', zorder=10)
     
-    ax2.set_xlim(0.4, 1.35)
-    ax2.set_ylim(-0.4, 0.9)
+    ax2.set_xlim(0.4, x_max)
+    ax2.set_ylim(-0.5, 0.9)
     ax2.set_xlabel('ER/IR Ratio', color='white', fontsize=12)
     ax2.set_title('Ratio vs Research & Team References', color='white', fontsize=14, fontweight='bold')
     ax2.tick_params(colors='white', labelleft=False)
