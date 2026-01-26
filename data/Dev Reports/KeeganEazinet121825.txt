@@ -1,0 +1,11 @@
+Pitch Profile: 
+
+Dead zone fastball with definitive shaping seeded. Horizontal break either needs to be highbred to 12+ and vertical break to under 9 to create a pseudo gyro sinker, or the inverse needs to happen where horizontal break is lowered by 2 inches and vertical break is increased by 4+ to create a higher ride fastball. 
+
+Strength Profile: 
+
+Strong enough lower half and upper half profile, with moderate imbalances in trunk rotation and the need for increased IR development (though the latter two are fine, just on the higher end of the 'fine' spectrum, signaling they could get problematic with fatigue).  
+
+Biomechanics Profile: 
+
+Low elbow extension values and slightly late into ball release which can be ameliorated by increased IR ability in general, after fixing this if it still doesn't not work then could benefit from a reworked arm path.

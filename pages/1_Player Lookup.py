@@ -770,7 +770,7 @@ def create_movement_chart(pitch_data):
     
     # Add legend with better positioning and explanation
     legend_elements = ax.get_legend_handles_labels()
-    legend = ax.legend(*legend_elements, loc='upper right', framealpha=0.8)
+    legend = ax.legend(*legend_elements, loc='upper left', framealpha=0.8)
     
     # Add explanation text
     ax.text(0.02, 0.02, 'Diamond = Average\nDashed ellipse = Expected range', 
