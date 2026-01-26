@@ -2254,7 +2254,7 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
         return
     
     # Summary metrics
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         er_count = len(er_data['testId'].unique()) if not er_data.empty else 0
@@ -2277,9 +2277,6 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
             st.metric("IR Peak Force", f"{ir_max:.1f} N")
         else:
             st.metric("IR Peak Force", "N/A")
-    with col5:
-        st.metric("ER/IR Ratio", f"{er_max/ir_max:.2f}")
-
     
     # Calculate ER/IR Ratio
     if not er_data.empty and not ir_data.empty:
@@ -2288,6 +2285,9 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
         
         if ir_max > 0:
             er_ir_ratio = er_max / ir_max
+            
+            st.markdown("---")
+            st.subheader("ER/IR Ratio Analysis")
             
             # Calculate team median if team data is available
             team_median_ratio = None
@@ -2328,7 +2328,7 @@ def display_arm_care_analysis(dynamo_perf_df, player_name, team_dynamo_df=None):
                     ir_vs_median = ((ir_max - team_median_ir) / team_median_ir) * 100
                     st.metric("IR vs Team Median", f"{ir_max:.1f} N", f"{ir_vs_median:+.1f}%")
             else:
-                pass
+                st.metric("ER/IR Ratio", f"{er_ir_ratio:.2f}")
             
             # Create larger comparison chart (full width)
             fig = create_er_ir_comparison_chart(er_max, ir_max, er_ir_ratio, player_name, 
@@ -2429,13 +2429,13 @@ def create_er_ir_comparison_chart(er_value, ir_value, ratio, player_name,
     
     # Add reference labels at top of plot area
     label_y = 0.45
-    ax2.text(0.70, label_y, 'Injury Risk\n ER Threshold\n(0.70)', ha='center', va='bottom', 
+    ax2.text(0.70, label_y, 'Injury Risk\nThreshold\n(0.70)', ha='center', va='bottom', 
             color='#FFD700', fontsize=9, fontweight='bold')
     ax2.text(0.83, label_y, 'Pro Pitcher\nAvg\n(0.83)', ha='center', va='bottom', 
             color='#00CED1', fontsize=9, fontweight='bold')
     ax2.text(1.0, label_y, 'Balanced\n(1.0)', ha='center', va='bottom', 
             color='white', fontsize=9, alpha=0.7)
-    ax2.text(1.3, label_y, 'IR Deficit \n(arm unloading\ninability)', ha='center', va='bottom', 
+    ax2.text(1.3, label_y, 'Lack of IR\n(arm unloading\nability)\n(1.3)', ha='center', va='bottom', 
             color='#FF6B6B', fontsize=9, fontweight='bold')
     
     # Add ratio value label at the end of the bar
