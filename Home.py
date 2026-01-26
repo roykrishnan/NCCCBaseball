@@ -15,12 +15,12 @@ sns.set_style("darkgrid")
 
 # Page configuration
 st.set_page_config(
-    page_title="ECC Kats Baseball Performance Dashboard", 
+    page_title="NCCC Baseball Player Lookup", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for styling - Kats Theme
+# Custom CSS for styling - NCCC Theme
 st.markdown("""
 <style>
     .main-header {
@@ -32,45 +32,61 @@ st.markdown("""
     }
     .sub-header {
         text-align: center;
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
         font-size: 1.2rem;
         margin-bottom: 2rem;
         opacity: 0.9;
     }
     .leaderboard-title {
-        color: #C41E3A;
+        color: 
+#0066B3;
         font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #C41E3A;
+        border-bottom: 2px solid 
+#0066B3;
         padding-bottom: 0.5rem;
     }
     .metric-card {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, 
+#0a1628 0%, 
+#102a4c 100%);
         padding: 1rem;
         border-radius: 8px;
-        border-left: 4px solid #C41E3A;
+        border-left: 4px solid 
+#0066B3;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(196, 30, 58, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 102, 179, 0.3);
     }
     .rank-1 {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #1a1a1a;
+        background: linear-gradient(135deg, 
+#FFC72C 0%, 
+#FFB800 100%);
+        color: 
+#004B87;
         font-weight: bold;
     }
     .rank-2 {
-        background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
-        color: #1a1a1a;
+        background: linear-gradient(135deg, 
+#C0C0C0 0%, 
+#A9A9A9 100%);
+        color: 
+#004B87;
         font-weight: bold;
     }
     .rank-3 {
-        background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
+        background: linear-gradient(135deg, 
+#CD7F32 0%, 
+#B8860B 100%);
         color: white;
         font-weight: bold;
     }
     .stSelectbox > div > div {
-        background-color: #C41E3A !important;
-        border: 2px solid #C41E3A !important;
+        background-color: 
+#0066B3 !important;
+        border: 2px solid 
+#004B87 !important;
     }
     .stSelectbox > div > div > div {
         color: white !important;
@@ -87,70 +103,86 @@ st.markdown("""
     .stSelectbox div[data-baseweb="select"] span {
         color: white !important;
     }
-            
+
     .stSelectbox label {
         color: white !important;
         font-weight: bold !important;
     }
-            
+
     .stTab [data-baseweb="tab-list"] {
         gap: 2px;
     }
     .stTab [data-baseweb="tab"] {
-        background-color: #2d2d2d;
-        color: #C0C0C0;
-        border: 1px solid #C41E3A;
+        background-color: 
+#102a4c;
+        color: 
+#B8D4E8;
+        border: 1px solid 
+#0066B3;
         border-radius: 4px 4px 0 0;
     }
     .stTab [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #C41E3A;
-        color: #ffffff;
+        background-color: 
+#0066B3;
+        color: 
+#ffffff;
     }
     .stMetric > div {
-        background-color: #1a1a1a !important;
-        border: 1px solid #C41E3A !important;
+        background-color: 
+#0a1628 !important;
+        border: 1px solid 
+#0066B3 !important;
         border-radius: 6px !important;
         padding: 0.5rem !important;
     }
     .stMetric [data-testid="metric-container"] {
-        background-color: #1a1a1a !important;
-        border: 1px solid #C41E3A !important;
+        background-color: 
+#0a1628 !important;
+        border: 1px solid 
+#0066B3 !important;
         border-radius: 6px !important;
         padding: 0.5rem !important;
     }
     .stMetric [data-testid="metric-container"] > div {
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
     }
     .stMetric .metric-label,
     .stMetric [data-testid="metric-container"] label {
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
         font-weight: bold !important;
     }
     .stMetric .metric-value,
     .stMetric [data-testid="metric-container"] [data-testid="metric-value"] {
-        color: #C41E3A !important;
+        color: 
+#FFC72C !important;
         font-weight: bold !important;
     }
-    
+
     /* Force metric styling */
     .stMetric * {
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
     }
-    
+
     .stMetric div,
     .stMetric span,
     .stMetric p,
     .stMetric label {
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
     }
-    
+
     [data-testid="metric-container"] * {
-        color: #C0C0C0 !important;
+        color: 
+#B8D4E8 !important;
     }
-    
-    /* Accent red for important values */
+
+    /* Accent gold for important values */
     [data-testid="metric-container"] [data-testid="metric-value"] {
-        color: #C41E3A !important;
+        color: 
+#FFC72C !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -365,7 +397,7 @@ def load_rapsodo_data():
     
     df = pd.DataFrame(all_player_data)
     
-    # Calculate kats Stuff+ for each pitch type
+    # Calculate Timberwolves Stuff+ for each pitch type
     pitch_types = ['Fastball', 'ChangeUp', 'Slider']
 
     for pitch_type in pitch_types:
@@ -375,11 +407,11 @@ def load_rapsodo_data():
         # Create temporary dataframe for this pitch type
             pitch_df = df[df[velocity_col].notna()].copy()
         if len(pitch_df) > 0:
-            # Calculate kats Stuff+ for this pitch type
+            # Calculate Timberwolves Stuff+ for this pitch type
             stuff_plus_col = f'{pitch_type}_Stuff+'
             
             # Calculate Stuff+ values
-            stuff_plus_values = calculate_kats_stuff_plus_for_pitch_type(pitch_df, pitch_type)
+            stuff_plus_values = calculate_Timberwolves_stuff_plus_for_pitch_type(pitch_df, pitch_type)
             
             # Create a mapping from PlayerName to Stuff+ value
             stuff_plus_mapping = dict(zip(pitch_df['PlayerName'], stuff_plus_values))
@@ -394,8 +426,8 @@ def load_rapsodo_data():
     
     return df
 
-def calculate_kats_stuff_plus_for_pitch_type(df, pitch_type):
-    """Calculate kats Stuff+ for a specific pitch type"""
+def calculate_Timberwolves_stuff_plus_for_pitch_type(df, pitch_type):
+    """Calculate Timberwolves Stuff+ for a specific pitch type"""
     
     def normalize_component(values, higher_is_better=True):
         if len(values) == 0 or values.std() == 0:
@@ -523,9 +555,9 @@ def create_leaderboard_chart(df, metric_col, title):
         normalized = (val - min_val) / (max_val - min_val) if max_val != min_val else 0.5
         # Create color based on performance
         if normalized > 0.8:
-            colors.append("#DF0E0EE1")
+            colors.append("#FFC72C")
         elif normalized > 0.6:
-            colors.append("#6D6D6D")
+            colors.append("#0066B3")
         elif normalized > 0.4:
             colors.append("#DEDEDE")
         else:
@@ -708,8 +740,8 @@ def load_individual_pitch_data():
     return pd.DataFrame(all_pitch_data) if all_pitch_data else pd.DataFrame()
 
 # Header
-st.markdown('<h1 class="main-header">ECC Kats Baseball</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Kats Stuff+ Dashboard</p>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">NCCC Timberwolves Baseball</h1>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Timberwolves Stuff+ Dashboard</p>', unsafe_allow_html=True)
 
 # Load data
 try:
@@ -769,7 +801,7 @@ total_pitches = rapsodo_df['TotalPitches'].sum()
 st.sidebar.metric("Total Pitches", f"{total_pitches:,}")
 
 # Main content
-st.subheader(f"Kats {display_name} Leaderboard")
+st.subheader(f"Timberwolves {display_name} Leaderboard")
 
 # Check if data exists for selected pitch type
 if stuff_plus_col not in rapsodo_df.columns:
@@ -788,7 +820,7 @@ col1, col2 = st.columns([3, 2])
 with col1:
     fig_stuff = create_leaderboard_chart(
         display_df, stuff_plus_col, 
-        f"kats {display_name} Rankings"
+        f"Timberwolves {display_name} Rankings"
     )
     st.pyplot(fig_stuff, use_container_width=True)
 
@@ -966,10 +998,10 @@ def get_access_token():
     return response.json()["access_token"] if response.ok else None
 
 @st.cache_data(ttl=1800)
-def load_kats_players_from_csv():
+def load_Timberwolves_players_from_csv():
     """Load players from CSV files"""
     data_dir = "data"
-    kats_players = {}
+    Timberwolves_players = {}
     
     if not os.path.exists(data_dir):
         return {}
@@ -1005,7 +1037,7 @@ def load_kats_players_from_csv():
             
             if player_id and player_name:
                 handedness = handedness_map.get(player_name, 'RHP')
-                kats_players[player_name] = {
+                Timberwolves_players[player_name] = {
                     'player_id': player_id,
                     'handedness': handedness,
                     'csv_file': csv_file
@@ -1014,7 +1046,7 @@ def load_kats_players_from_csv():
         except Exception:
             continue
     
-    return kats_players
+    return Timberwolves_players
 
 @st.cache_data(ttl=1800)
 def fetch_all_profiles():
@@ -1059,11 +1091,11 @@ def fetch_all_profiles():
         st.error(f"Error fetching profiles: {str(e)}")
         return {}
 
-def match_players_to_profiles(kats_players, all_profiles):
+def match_players_to_profiles(Timberwolves_players, all_profiles):
     """Match CSV players to VALD profiles by name"""
     name_to_profile_id = {}
     
-    for player_name in kats_players.keys():
+    for player_name in Timberwolves_players.keys():
         for profile_id, profile_data in all_profiles.items():
             if profile_data['fullName'] == player_name:
                 name_to_profile_id[player_name] = profile_id
@@ -1426,7 +1458,7 @@ def create_trunk_rotation_leaderboard(dynamo_perf_df):
         ax.axhline(y=group_avg, color='white', linestyle='--', linewidth=2, alpha=0.8,
                   label=f'Group Average: {group_avg:.1f}')
         
-        ax.set_title(f'ECC Kats Baseball - Trunk Rotation\n{selected_metric_display}',
+        ax.set_title(f'NCCC Timberwolves Baseball - Trunk Rotation\n{selected_metric_display}',
                     fontsize=16, pad=20, fontweight='bold', color='white')
         ax.set_ylabel(f'{selected_metric_display}', fontsize=12, color='white')
         ax.set_xlabel('Players (Ranked by Performance)', fontsize=12, color='white')
@@ -1628,7 +1660,7 @@ def extract_performance_metrics_from_trials(trials_df, test_data):
     
     return pd.DataFrame(performance_data) if performance_data else pd.DataFrame()
 
-def create_leaderboard_dashboard(perf_df, kats_players):
+def create_leaderboard_dashboard(perf_df, Timberwolves_players):
     """Create focused leaderboard dashboard for the four key tests"""
     
     if perf_df.empty:
@@ -1637,7 +1669,7 @@ def create_leaderboard_dashboard(perf_df, kats_players):
     
     # Add player names and handedness
     profile_id_to_name = {}
-    for name, info in kats_players.items():
+    for name, info in Timberwolves_players.items():
         # Match by athleteId or profileId
         for _, row in perf_df.iterrows():
             athlete_id = row.get('athleteId') or row.get('profileId')
@@ -1654,7 +1686,7 @@ def create_leaderboard_dashboard(perf_df, kats_players):
     perf_df['player_name'] = perf_df['profileId'].map(profile_id_to_name)
     
     # Add handedness
-    name_to_handedness = {name: info['handedness'] for name, info in kats_players.items()}
+    name_to_handedness = {name: info['handedness'] for name, info in Timberwolves_players.items()}
     perf_df['handedness'] = perf_df['player_name'].map(name_to_handedness)
     
     # Clean up test types - fix SLJ to SJ
@@ -1826,7 +1858,7 @@ def create_test_leaderboard(perf_df, test_code, display_name):
               label=f'Group Average: {group_avg:.2f} {units}')
     
     # Styling
-    ax.set_title(f'ECC kats Baseball\n{display_name} - {selected_metric}', 
+    ax.set_title(f'NCCC Timberwolves Baseball\n{display_name} - {selected_metric}', 
                 fontsize=16, pad=20, fontweight='bold')
     ax.set_ylabel(f'{selected_metric} ({units})', fontsize=12)
     ax.set_xlabel('Players (Ranked by Performance)', fontsize=12)
@@ -1950,12 +1982,12 @@ def create_test_leaderboard(perf_df, test_code, display_name):
     """)
 
 def main():
-    st.title("ECC Kats Baseball - Force Plate Leaderboards")
+    st.title("NCCC Timberwolves Baseball - Force Plate Leaderboards")
     st.markdown('<p class="sub-header">Performance rankings for CMJ, Squat Jump, Plyo Pushup, and Hop Test</p>', unsafe_allow_html=True)
     
     # Initialize session state
-    if 'kats_players' not in st.session_state:
-        st.session_state.kats_players = {}
+    if 'Timberwolves_players' not in st.session_state:
+        st.session_state.Timberwolves_players = {}
     if 'all_profiles' not in st.session_state:
         st.session_state.all_profiles = {}
     if 'name_to_profile_id' not in st.session_state:
@@ -1966,18 +1998,18 @@ def main():
     # Initialize data
     if not st.session_state.initialized:
         with st.spinner("Loading team data..."):
-            kats_players = load_kats_players_from_csv()
+            Timberwolves_players = load_Timberwolves_players_from_csv()
             all_profiles = fetch_all_profiles()
-            name_to_profile_id = match_players_to_profiles(kats_players, all_profiles)
+            name_to_profile_id = match_players_to_profiles(Timberwolves_players, all_profiles)
             
-            st.session_state.kats_players = kats_players
+            st.session_state.Timberwolves_players = Timberwolves_players
             st.session_state.all_profiles = all_profiles
             st.session_state.name_to_profile_id = name_to_profile_id
             st.session_state.initialized = True
     
     st.sidebar.subheader("Force Plate Team Leaderboards")
     with st.sidebar.expander("Team Info", expanded=True):
-        st.write(f"**Players with Motion Capture Data:** {len(st.session_state.kats_players)}")
+        st.write(f"**Players with Motion Capture Data:** {len(st.session_state.Timberwolves_players)}")
         st.write(f"**Matched with VALD:** {len(st.session_state.name_to_profile_id)}")
     
     # Date selection
@@ -2023,7 +2055,7 @@ def main():
     
     # Display leaderboards if data is available
     if 'performance_data' in st.session_state and not st.session_state.performance_data.empty:
-        create_leaderboard_dashboard(st.session_state.performance_data, st.session_state.kats_players)
+        create_leaderboard_dashboard(st.session_state.performance_data, st.session_state.Timberwolves_players)
     else:
         st.info("Click 'Load Force Plate Data' to generate leaderboards for the selected date")
 
@@ -2044,10 +2076,10 @@ def main():
         # Use the same profile matching as ForceDecks
         if 'name_to_profile_id' not in st.session_state or not st.session_state.name_to_profile_id:
             # Initialize if not done
-            kats_players = load_kats_players_from_csv()
+            Timberwolves_players = load_Timberwolves_players_from_csv()
             all_profiles = fetch_all_profiles()
-            name_to_profile_id = match_players_to_profiles(kats_players, all_profiles)
-            st.session_state.kats_players = kats_players
+            name_to_profile_id = match_players_to_profiles(Timberwolves_players, all_profiles)
+            st.session_state.Timberwolves_players = Timberwolves_players
             st.session_state.all_profiles = all_profiles
             st.session_state.name_to_profile_id = name_to_profile_id
         
@@ -2080,8 +2112,8 @@ if __name__ == "__main__":
     main()
 
 st.header("Table Assessments - Team View")
-st.markdown('<p class="sub-header"> Kats Baseball Assessment Table by Player</p>', unsafe_allow_html=True)
-excel_file_path = os.path.join("data", "KatsBaseballTableAssessment.xlsx")
+st.markdown('<p class="sub-header"> Timberwolves Baseball Assessment Table by Player</p>', unsafe_allow_html=True)
+excel_file_path = os.path.join("data", "TimberwolvesBaseballTableAssessment.xlsx")
 
 try:
     # Read the Excel file
@@ -2218,4 +2250,4 @@ except Exception as e:
 
 # Footer
 st.markdown("---")
-st.markdown("*ECC Kats Home Dashboard | Built by Liquid Sports Lab*")
+st.markdown("*NCCC Timberwolves Home Dashboard | Built by Liquid Sports Lab*")
