@@ -1,0 +1,12 @@
+Pitch Profile: 
+
+Not 100% when throwing this pen, just noting this. Fastball behavior needs to stabilize to get better expected behaviors, curveball is a good pitch and hope to see it have the same behavior when throwing at max intent.
+
+Strength Profile: 
+
+Lean mass addition is necessary here more than anything else. Beyer is a really good athlete, displaces the body well, but his lack of mass is holding him back despite having really good acceleration deltas. Force = mass times acceleration, our major goal globally with him should be increasing mass while keeping acceleration the same (it can even go slightly lower). 
+
+
+Biomechanics Profile: 
+
+Arm's slightly late into ball release, and works pretty hard by itself due to lack of lean mass throughout the kinematic sequence supporting it. Low pelvis and torso peak values.
